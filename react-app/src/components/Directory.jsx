@@ -1,6 +1,6 @@
 import ToolRow from './ToolRow.jsx'
 
-export default function Directory({ groups, isEmpty }) {
+export default function Directory({ groups, isEmpty, isMobile }) {
   return (
     <div style={{ flex: 1, minWidth: 0 }}>
       {isEmpty && (
@@ -28,7 +28,7 @@ export default function Directory({ groups, isEmpty }) {
                 <span style={{ fontSize: 12.5, color: '#A8A89E', fontWeight: 500 }}>{cat.en}</span>
               </div>
               {cat.tools.map((tool) => (
-                <ToolRow key={tool.id} tool={tool} />
+                <ToolRow key={tool.id} tool={tool} isMobile={isMobile} />
               ))}
             </div>
           ))}

@@ -7,7 +7,7 @@ const toggleIn = (arr, v) => (arr.includes(v) ? arr.filter((x) => x !== v) : arr
 // Holds all directory state and exposes derived view-model values + handlers.
 // `options` mirrors the original component props: { accent, density, showRowDesc }.
 export default function useDirectory(options = {}) {
-  const { accent = '#2347D9', density = 'comfortable', showRowDesc = true } = options
+  const { accent = '#2347D9', density = 'comfortable', showRowDesc = true, isMobile = false } = options
 
   const [search, setSearch] = useState('')
   const [platform, setPlatform] = useState('all')
@@ -17,7 +17,7 @@ export default function useDirectory(options = {}) {
   const [compare, setCompare] = useState([])
   const [compareOpen, setCompareOpen] = useState(false)
   const [expanded, setExpanded] = useState({ web: true, desktop: true })
-  const [navOpen, setNavOpen] = useState(true)
+  const [navOpen, setNavOpen] = useState(!isMobile)
 
   // ---- mutations ----
   const toggleCat = useCallback((k) => setCats((c) => toggleIn(c, k)), [])

@@ -1,11 +1,11 @@
 import Logo from './Logo.jsx'
 
-export default function ToolRow({ tool }) {
+export default function ToolRow({ tool, isMobile }) {
   return (
     <div
       className="tool-row"
       onClick={tool.onOpen}
-      style={{ display: 'flex', alignItems: 'center', gap: 16, padding: 'var(--rowpad)', borderBottom: '1px solid #EDEBE4', cursor: 'pointer', borderRadius: 12 }}
+      style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 12 : 16, padding: 'var(--rowpad)', borderBottom: '1px solid #EDEBE4', cursor: 'pointer', borderRadius: 12, flexWrap: isMobile ? 'wrap' : 'nowrap' }}
     >
       <Logo id={tool.id} name={tool.name} size={46} radius={9} />
       <div style={{ flex: 1, minWidth: 0 }}>
@@ -22,7 +22,7 @@ export default function ToolRow({ tool }) {
           {tool.descZh}
         </div>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 11, flex: 'none' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 11, flex: 'none', flexWrap: 'wrap', justifyContent: 'flex-end', ...(isMobile ? { flexBasis: '100%', marginTop: 4 } : null) }}>
         <span style={tool.priceBadgeStyle}>
           <span style={tool.priceDotStyle}></span>
           {tool.priceZh}

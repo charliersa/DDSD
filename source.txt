@@ -1,0 +1,52 @@
+
+繪圖軟體
+線上版：
+【相片編輯／合成】
+Photopea — 介面與 Photoshop 幾乎相同，支援 PSD、AI、Sketch、XCF 等格式，免費且瀏覽器直接使用，適合修圖、去背、合成。學會 Photopea 等同熟悉 Photoshop。
+Pixlr（Pixlr E／Pixlr X）— 老牌線上修圖工具，分為進階版（E）與簡易版（X），內建濾鏡與 AI 功能。
+Sumopaint — 圖層、筆刷、濾鏡完整的網頁繪圖軟體，適合一般修圖與插畫。
+【向量繪圖】
+Vectorpea — 與 Illustrator 操作邏輯相近，適合製作 Logo、插畫線稿、向量圖形。學會 Vectorpea 等同熟悉 Illustrator。
+Boxy SVG — 直接編輯 SVG 檔案，適合製作網頁圖示與向量素材。
+【3D 建模】
+Tinkercad — Autodesk 推出的入門級 3D 建模平台，以拖拉幾何形狀為主，常用於教學與 3D 列印初學。
+Doodle3D — 介面類似 Tinkercad，學會即具備 3D 基礎概念，便於後續接軌 Blender、Maya 等桌面軟體。
+SculptGL — 線上雕塑類 3D 建模，類似簡化版 ZBrush。
+【UI／UX 與平面設計】
+Figma — 業界標準的 UI／UX 設計工具，支援多人即時共編、原型互動、設計系統管理。
+Canva — 模板導向的設計平台，適合製作社群圖、海報、簡報、名片，無設計基礎也能上手。
+【插畫與漫畫】
+MediBang Paint（網頁版）— 支援漫畫分鏡、筆刷、網點素材，適合漫畫與插畫創作。
+Sketchpad — 輕量繪圖板，支援多種筆刷、圖層與形狀工具。
+【協作與白板】
+Excalidraw — 手繪風格白板，適合畫流程圖、架構圖、教學示意圖。
+Aggie.io／Magma — 多人同步繪圖協作平台，適合團隊或教學共同創作。
+AutoDraw — Google 推出的 AI 輔助繪圖，會辨識線條並建議對應圖示，適合無繪畫基礎者快速產出。
+電腦版：
+【3D 建模／動畫】
+ZBrush — 高精度數位雕塑，業界角色與生物建模標準，廣泛用於電影、遊戲角色製作。
+Maya — Autodesk 推出的綜合 3D 軟體，建模、骨架綁定、動畫齊全，動畫與影視業界主流。
+Blender — 免費開源，建模、雕塑、動畫、算圖、剪輯一應俱全，社群資源豐富。
+Cinema 4D — 介面親和，動態圖形（Motion Graphics）首選。
+3ds Max — Autodesk 系列，建築視覺化、室內設計、遊戲場景常用。
+【3D 紋理／材質】
+Substance Painter — 3D 模型表面繪製與材質製作，PBR 流程業界標準。
+Substance Designer — 程序化材質節點編輯器，常與 Painter 搭配使用。
+Marmoset Toolbag — 即時 PBR 渲染、貼圖烘焙與作品集呈現。
+【遊戲引擎】
+Unity — 跨平台遊戲引擎，2D／3D 皆強，獨立遊戲與行動遊戲主流。
+Unreal Engine — Epic 推出的高畫質引擎，AAA 遊戲、虛擬製作與建築視覺化常用。
+【2D 繪圖／插畫】
+Clip Studio Paint — 漫畫與插畫首選，筆刷豐富、漫畫分鏡功能完整。
+SAI（PaintTool SAI）— 線條順手、介面輕量，適合純插畫上色。
+Krita — 免費開源，筆刷引擎強大，適合插畫與概念設計。
+Corel Painter — 模擬傳統媒材（油畫、水彩、粉彩），擬真筆觸著稱。
+【相片編輯／合成】
+Adobe Photoshop — 業界標準的相片編輯與合成軟體。
+Affinity Photo — 一次買斷的 Photoshop 替代方案，效能佳。
+GIMP — 免費開源相片編輯軟體。
+【向量繪圖】
+Adobe Illustrator — 向量繪圖業界標準，Logo、插畫、印刷品設計首選。
+Affinity Designer — 向量與點陣雙模式切換，一次買斷替代方案。
+Inkscape — 免費開源 SVG 向量編輯軟體。
+

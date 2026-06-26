@@ -1,0 +1,29 @@
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:"Hanken Grotesk","Noto Sans TC",system-ui,sans-serif;
+  background:#FBFAF7;color:#1B1B18;-webkit-font-smoothing:antialiased;
+  --accent:#2347D9;--rowpad:15px 14px;--descdisplay:block;
+}
+::selection{background:#D7DEFB;}
+input::placeholder{color:#A8A89E;}
+a{color:inherit;}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-thumb{background:#DCDAD1;border-radius:8px;border:2px solid #FBFAF7;}
+
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes slideIn{from{transform:translateX(100%);}to{transform:translateX(0);}}
+@keyframes popIn{from{opacity:0;transform:translateY(10px) scale(.985);}to{opacity:1;transform:none;}}
+
+/* Hover states migrated from the original style-hover attributes */
+.tool-row{transition:background .14s, box-shadow .14s;}
+.tool-row:hover{background:#FFFFFF;box-shadow:0 4px 18px rgba(27,27,24,.06);}
+.nav-row:hover{background:#F1EFE9;}
+.btn-outline{transition:border-color .12s;}
+.btn-outline:hover{border-color:#1B1B18;}
+.nav-collapse-btn:hover{background:#E6E3DB;}
+.nav-expand-btn:hover{border-color:#1B1B18;}
+.search-input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+}

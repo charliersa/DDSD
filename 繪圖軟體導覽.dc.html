@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;family=Noto+Sans+TC:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:"Hanken Grotesk","Noto Sans TC",system-ui,sans-serif;background:#FBFAF7;color:#1B1B18;-webkit-font-smoothing:antialiased;--accent:#2347D9;--rowpad:15px 14px;--descdisplay:block;}
+  ::selection{background:#D7DEFB;}
+  input::placeholder{color:#A8A89E;}
+  a{color:inherit;}
+  image-slot{width:100%!important;height:100%!important;display:block!important;}
+  ::-webkit-scrollbar{width:10px;height:10px;}
+  ::-webkit-scrollbar-thumb{background:#DCDAD1;border-radius:8px;border:2px solid #FBFAF7;}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  @keyframes slideIn{from{transform:translateX(100%);}to{transform:translateX(0);}}
+  @keyframes popIn{from{opacity:0;transform:translateY(10px) scale(.985);}to{opacity:1;transform:none;}}
+</style>
+</helmet>
+
+<div style="{{ rootStyle }}">
+
+  <!-- Title band -->
+  <div style="max-width:1140px;margin:0 auto;padding:56px 28px 26px;">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:28px;flex-wrap:wrap;">
+      <div style="max-width:700px;">
+        <div style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#9A9A90;font-weight:700;margin-bottom:16px;">教學軟體導覽 · Software Guide</div>
+        <h1 style="margin:0;font-size:46px;line-height:1.04;font-weight:800;letter-spacing:-.015em;color:#1B1B18;">繪圖軟體資訊整合<br><span style="font-weight:500;color:#6E6E66;font-size:34px;">Drawing &amp; Design Software Directory</span></h1>
+        <p style="margin:20px 0 0;font-size:16px;line-height:1.7;color:#56564E;max-width:580px;">收錄線上與電腦版的繪圖、3D、設計與遊戲開發工具。依分類、平台、價格篩選，點任一列查看介紹、連結官網，或勾選加入比較。</p>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:58px;font-weight:800;line-height:1;color:var(--accent);letter-spacing:-.02em;">{{ totalCount }}</div>
+        <div style="font-size:13px;color:#9A9A90;letter-spacing:.1em;margin-top:8px;">款工具 · TOOLS</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticky toolbar -->
+  <div style="position:sticky;top:0;z-index:20;background:rgba(251,250,247,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid #EAE8E1;border-bottom:1px solid #EAE8E1;">
+    <div style="max-width:1140px;margin:0 auto;padding:14px 28px;">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div style="position:relative;flex:1;min-width:240px;">
+          <span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#A8A89E;font-size:16px;pointer-events:none;">⌕</span>
+          <input value="{{ search }}" onInput="{{ onSearch }}" placeholder="搜尋軟體名稱、功能…  Search tools" style="width:100%;border:1px solid #E2E0D8;background:#fff;border-radius:11px;padding:11px 14px 11px 38px;font-size:14px;font-family:inherit;color:#1B1B18;outline:none;" style-focus="border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);">
+        </div>
+        <div style="display:flex;gap:8px;">
+          <sc-for list="{{ priceOpts }}" as="opt" hint-placeholder-count="3">
+            <button onClick="{{ opt.onClick }}" title="{{ opt.labelEn }}" style="{{ opt.style }}"><span style="{{ opt.dotStyle }}"></span>{{ opt.labelZh }}</button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ hasFilters }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ onClearFilters }}" style="border:none;background:none;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;padding:6px 6px;white-space:nowrap;">清除 Reset</button>
+        </sc-if>
+        <div style="font-size:13px;color:#9A9A90;white-space:nowrap;font-variant-numeric:tabular-nums;margin-left:auto;">{{ shownCount }} / {{ totalCount }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Two-column: tree sidebar + directory -->
+  <div style="max-width:1140px;margin:0 auto;padding:6px 28px 160px;display:flex;gap:34px;align-items:flex-start;">
+
+    <sc-if value="{{ navOpen }}" hint-placeholder-val="{{ true }}">
+    <aside style="width:246px;flex:none;position:sticky;top:82px;align-self:flex-start;max-height:calc(100vh - 98px);overflow-y:auto;padding:26px 0 20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:0 6px 12px 10px;">
+        <span style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#A8A89E;font-weight:700;">分類導覽 · Browse</span>
+        <button onClick="{{ onToggleNav }}" title="收合側欄" style="border:none;background:#F1EFE9;color:#56564E;width:26px;height:26px;border-radius:7px;cursor:pointer;font-size:15px;line-height:1;font-family:inherit;display:flex;align-items:center;justify-content:center;flex:none;" style-hover="background:#E6E3DB;">‹</button>
+      </div>
+      <sc-for list="{{ tree }}" as="node" hint-placeholder-count="11">
+        <div onClick="{{ node.onClick }}" style="{{ node.rowStyle }}" style-hover="background:#F1EFE9;">
+          <sc-if value="{{ node.showChevron }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ node.onToggle }}" style="{{ node.chevronStyle }}">{{ node.chevron }}</button>
+          </sc-if>
+          <sc-if value="{{ node.showDot }}" hint-placeholder-val="{{ false }}">
+            <span style="{{ node.dotStyle }}"></span>
+          </sc-if>
+          <span style="{{ node.labelStyle }}">{{ node.label }}</span>
+          <span style="{{ node.countStyle }}">{{ node.count }}</span>
+        </div>
+      </sc-for>
+    </aside>
+    </sc-if>
+
+    <sc-if value="{{ navClosed }}" hint-placeholder-val="{{ false }}">
+    <aside style="width:46px;flex:none;position:sticky;top:82px;align-self:flex-start;padding-top:26px;">
+      <button onClick="{{ onToggleNav }}" title="展開分類導覽" style="border:1px solid #E2E0D8;background:#fff;color:#3A3A34;width:42px;height:42px;border-radius:11px;cursor:pointer;font-size:16px;line-height:1;font-family:inherit;display:flex;align-items:center;justify-content:center;" style-hover="border-color:#1B1B18;">☰</button>
+    </aside>
+    </sc-if>
+
+    <div style="flex:1;min-width:0;">
+
+    <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+      <div style="text-align:center;padding:100px 20px;color:#9A9A90;">
+        <div style="font-size:38px;margin-bottom:12px;opacity:.5;">∅</div>
+        <div style="font-size:16px;color:#56564E;">找不到符合條件的軟體</div>
+        <div style="font-size:13px;margin-top:6px;">No tools match your filters — try resetting.</div>
+      </div>
+    </sc-if>
+
+    <sc-for list="{{ groups }}" as="group" hint-placeholder-count="2">
+      <section style="margin-top:48px;">
+        <div style="display:flex;align-items:baseline;gap:14px;padding-bottom:9px;border-bottom:2px solid #1B1B18;">
+          <h2 style="margin:0;font-size:25px;font-weight:800;color:#1B1B18;letter-spacing:-.01em;">{{ group.zh }}</h2>
+          <span style="font-size:14px;font-weight:600;color:#9A9A90;letter-spacing:.03em;">{{ group.en }}</span>
+          <span style="font-size:13px;color:#B0AFA5;">·  {{ group.sub }}</span>
+          <span style="margin-left:auto;font-size:13px;color:#9A9A90;white-space:nowrap;">{{ group.count }} 款</span>
+        </div>
+
+        <sc-for list="{{ group.cats }}" as="cat" hint-placeholder-count="3">
+          <div style="margin-top:30px;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px;">
+              <span style="{{ cat.dotStyle }}"></span>
+              <h3 style="margin:0;font-size:15px;font-weight:700;color:#1B1B18;">{{ cat.zh }}</h3>
+              <span style="font-size:12.5px;color:#A8A89E;font-weight:500;">{{ cat.en }}</span>
+            </div>
+
+            <sc-for list="{{ cat.tools }}" as="tool" hint-placeholder-count="3">
+              <div onClick="{{ tool.onOpen }}" style="display:flex;align-items:center;gap:16px;padding:var(--rowpad);border-bottom:1px solid #EDEBE4;cursor:pointer;border-radius:12px;transition:background .14s,box-shadow .14s;" style-hover="background:#FFFFFF;box-shadow:0 4px 18px rgba(27,27,24,.06);">
+                <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ tool.logoId }}" src="{{ tool.logoUrl }}" shape="rounded" radius="9" placeholder="" style="width:46px;height:46px;display:block;flex:none;" hint-size="46px,46px"></x-import>
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;">
+                    <span style="font-size:16px;font-weight:700;color:#1B1B18;" data-om-label="Affinity">{{ tool.name }}</span>
+                    <span style="font-size:13px;color:#8C8C82;">{{ tool.tag }}</span>
+                    <sc-if value="{{ tool.hasEquiv }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-size:11px;font-weight:700;color:var(--accent);background:color-mix(in srgb, var(--accent) 11%, #ffffff);border-radius:5px;padding:2px 6px;">{{ tool.equivLabel }}</span>
+                    </sc-if>
+                  </div>
+                  <div style="display:var(--descdisplay);font-size:13px;color:#76766E;margin-top:3px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ tool.descZh }}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:11px;flex:none;">
+                  <span style="{{ tool.priceBadgeStyle }}"><span style="{{ tool.priceDotStyle }}"></span>{{ tool.priceZh }}</span>
+                  <sc-if value="{{ tool.inCompare }}" hint-placeholder-val="{{ false }}">
+                    <button onClick="{{ tool.onToggleCompare }}" style="border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:9px;padding:7px 11px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;">✓ 已加入</button>
+                  </sc-if>
+                  <sc-if value="{{ tool.notInCompare }}" hint-placeholder-val="{{ true }}">
+                    <button onClick="{{ tool.onToggleCompare }}" style="border:1px solid #E2E0D8;background:#fff;color:#3A3A34;border-radius:9px;padding:7px 11px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;" style-hover="border-color:#1B1B18;">＋ 比較</button>
+                  </sc-if>
+                  <button onClick="{{ tool.onOpenSite }}" title="官方網站 Official site" style="border:1px solid #E2E0D8;background:#fff;color:#3A3A34;border-radius:9px;padding:7px 10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;" style-hover="border-color:#1B1B18;">官網 ↗</button>
+                  <span style="color:#C9C8BF;font-size:18px;line-height:1;">›</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </section>
+    </sc-for>
+    </div>
+  </div>
+
+  <!-- Detail slide-over -->
+  <sc-if value="{{ detailOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ onCloseDetail }}" style="position:fixed;inset:0;z-index:40;background:rgba(27,27,24,.34);animation:fadeIn .18s ease;"></div>
+    <div style="position:fixed;top:0;right:0;bottom:0;z-index:41;width:min(468px,94vw);background:#fff;box-shadow:-14px 0 50px rgba(0,0,0,.16);animation:slideIn .28s cubic-bezier(.22,1,.36,1);overflow-y:auto;">
+      <div style="position:sticky;top:0;background:#fff;display:flex;justify-content:flex-end;padding:14px 16px;z-index:2;">
+        <button onClick="{{ onCloseDetail }}" style="border:none;background:#F1EFE9;color:#56564E;width:34px;height:34px;border-radius:50%;font-size:18px;cursor:pointer;line-height:1;font-family:inherit;">×</button>
+      </div>
+      <div style="padding:0 30px 52px;">
+        <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ detailTool.logoId }}" src="{{ detailTool.logoUrl }}" shape="rounded" radius="16" placeholder="拖入 Logo" style="width: 84px; height: 84px; display: block" hint-size="84px,84px"></x-import>
+        <h2 style="margin:18px 0 3px;font-size:29px;font-weight:800;letter-spacing:-.01em;color:#1B1B18;">{{ detailTool.name }}</h2>
+        <div style="font-size:14px;color:#8C8C82;">{{ detailTool.tag }}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;">
+          <span style="display:inline-flex;align-items:center;background:#F1EFE9;border-radius:8px;padding:5px 11px;font-size:12.5px;font-weight:600;color:#56564E;">{{ detailTool.platZh }} · {{ detailTool.platEn }}</span>
+          <span style="display:inline-flex;align-items:center;gap:7px;background:#F1EFE9;border-radius:8px;padding:5px 11px;font-size:12.5px;font-weight:600;color:#56564E;"><span style="{{ detailTool.catDotStyle }}"></span>{{ detailTool.catZh }}</span>
+          <span style="{{ detailTool.priceBadgeStyle }}"><span style="{{ detailTool.priceDotStyle }}"></span>{{ detailTool.priceZh }} · {{ detailTool.priceEn }}</span>
+        </div>
+        <sc-if value="{{ detailTool.hasEquiv }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:18px;background:color-mix(in srgb, var(--accent) 7%, #ffffff);border:1px solid color-mix(in srgb, var(--accent) 22%, #ffffff);border-radius:11px;padding:13px 15px;font-size:13.5px;line-height:1.6;color:#3A3A34;">
+            <span style="color:var(--accent);font-weight:700;">學習提示 ·</span> 操作邏輯接近 <b>{{ detailTool.equivBare }}</b>，學會它等同熟悉 {{ detailTool.equivBare }}。
+          </div>
+        </sc-if>
+        <a href="{{ detailTool.url }}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:22px;background:var(--accent);color:#fff;border-radius:12px;padding:14px;font-size:15px;font-weight:700;text-decoration:none;">前往官方網站 · Visit Website ↗</a>
+        <h3 style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#A8A89E;font-weight:700;margin:30px 0 8px;">介紹 · About</h3>
+        <p style="margin:0;font-size:15px;line-height:1.78;color:#3A3A34;">{{ detailTool.descZh }}</p>
+        <h3 style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#A8A89E;font-weight:700;margin:24px 0 8px;">English</h3>
+        <p style="margin:0;font-size:14px;line-height:1.7;color:#6E6E66;">{{ detailTool.descEn }}</p>
+        <div style="margin-top:30px;">
+          <sc-if value="{{ detailTool.inCompare }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ detailTool.onToggleCompare }}" style="width:100%;border:1px solid var(--accent);background:color-mix(in srgb, var(--accent) 9%, #ffffff);color:var(--accent);border-radius:11px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">✓ 已加入比較</button>
+          </sc-if>
+          <sc-if value="{{ detailTool.notInCompare }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ detailTool.onToggleCompare }}" style="width:100%;border:1px solid #E2E0D8;background:#fff;color:#1B1B18;border-radius:11px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;" style-hover="border-color:#1B1B18;">＋ 加入比較清單</button>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- Compare tray -->
+  <sc-if value="{{ compareCount }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:35;background:#1B1B18;color:#fff;border-radius:16px;padding:11px 14px 11px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 14px 44px rgba(0,0,0,.24);animation:popIn .22s ease;max-width:94vw;flex-wrap:wrap;">
+      <span style="font-size:13px;font-weight:700;letter-spacing:.03em;white-space:nowrap;">比較清單 {{ compareCount }}/4</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <sc-for list="{{ compareChips }}" as="chip" hint-placeholder-count="2">
+          <span style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.13);border-radius:8px;padding:5px 6px 5px 10px;font-size:12.5px;white-space:nowrap;">{{ chip.name }}<button onClick="{{ chip.onRemove }}" style="border:none;background:none;color:rgba(255,255,255,.65);cursor:pointer;font-size:14px;padding:0;line-height:1;font-family:inherit;">×</button></span>
+        </sc-for>
+      </div>
+      <button onClick="{{ onClearCompare }}" style="border:none;background:none;color:rgba(255,255,255,.55);font-size:12.5px;cursor:pointer;font-family:inherit;white-space:nowrap;">清除</button>
+      <sc-if value="{{ canCompare }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ onOpenCompare }}" style="border:none;background:var(--accent);color:#fff;border-radius:10px;padding:9px 16px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">開始比較 →</button>
+      </sc-if>
+      <sc-if value="{{ cannotCompare }}" hint-placeholder-val="{{ true }}">
+        <span style="font-size:12px;color:rgba(255,255,255,.5);white-space:nowrap;">再選一個比較</span>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- Compare modal -->
+  <sc-if value="{{ compareOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ onCloseCompare }}" style="position:fixed;inset:0;z-index:50;background:rgba(27,27,24,.42);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn .18s ease;">
+      <div onClick="{{ stop }}" style="background:#FBFAF7;border-radius:18px;max-width:1020px;width:100%;max-height:88vh;overflow:auto;box-shadow:0 26px 80px rgba(0,0,0,.32);animation:popIn .24s ease;">
+        <div style="position:sticky;top:0;background:#FBFAF7;padding:22px 26px 15px;border-bottom:1px solid #EAE8E1;display:flex;align-items:center;justify-content:space-between;z-index:1;">
+          <div style="display:flex;align-items:baseline;gap:12px;">
+            <h2 style="margin:0;font-size:22px;font-weight:800;color:#1B1B18;">軟體比較</h2>
+            <span style="font-size:14px;color:#9A9A90;font-weight:600;">Compare · {{ compareCount }}</span>
+          </div>
+          <button onClick="{{ onCloseCompare }}" style="border:none;background:#F1EFE9;color:#56564E;width:34px;height:34px;border-radius:50%;font-size:18px;cursor:pointer;line-height:1;font-family:inherit;">×</button>
+        </div>
+        <div style="display:flex;gap:16px;padding:22px 26px 30px;overflow-x:auto;">
+          <sc-for list="{{ compareTools }}" as="tool" hint-placeholder-count="2">
+            <div style="flex:1 0 230px;max-width:300px;background:#fff;border:1px solid #EAE8E1;border-radius:14px;padding:18px;">
+              <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ tool.logoId }}" src="{{ tool.logoUrl }}" shape="rounded" radius="13" placeholder="" style="width:54px;height:54px;display:block;" hint-size="54px,54px"></x-import>
+              <div style="font-size:18px;font-weight:800;margin-top:13px;color:#1B1B18;">{{ tool.name }}</div>
+              <div style="font-size:13px;color:#8C8C82;margin-top:2px;">{{ tool.tag }}</div>
+              <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:13px;">
+                <span style="display:inline-flex;align-items:center;background:#F1EFE9;border-radius:7px;padding:4px 9px;font-size:12px;font-weight:600;color:#56564E;">{{ tool.platZh }}</span>
+                <span style="{{ tool.priceBadgeStyle }}"><span style="{{ tool.priceDotStyle }}"></span>{{ tool.priceZh }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:7px;margin-top:11px;font-size:12.5px;color:#76766E;"><span style="{{ tool.catDotStyle }}"></span>{{ tool.catZh }} · {{ tool.catEn }}</div>
+              <div style="height:1px;background:#EDEBE4;margin:14px 0;"></div>
+              <div style="font-size:13px;line-height:1.65;color:#3A3A34;">{{ tool.descZh }}</div>
+              <a href="{{ tool.url }}" target="_blank" rel="noopener" style="display:inline-block;margin-top:14px;font-size:13px;font-weight:700;color:var(--accent);text-decoration:none;">官方網站 ↗</a>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180,&quot;height&quot;:860},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#2347D9&quot;,&quot;options&quot;:[&quot;#2347D9&quot;,&quot;#1B7A5A&quot;,&quot;#B4522D&quot;,&quot;#6D4AcF&quot;,&quot;#1B1B18&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;comfortable&quot;,&quot;compact&quot;],&quot;default&quot;:&quot;comfortable&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showRowDesc&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { search:'', platform:'all', cats:[], prices:[], detailId:null, compare:[], compareOpen:false, expanded:{web:true,desktop:true}, navOpen:true };
+
+  CATS = [
+    {key:'photo',   zh:'相片編輯／合成', en:'Photo Editing',      dot:'#D9776B'},
+    {key:'vector',  zh:'向量繪圖',       en:'Vector Graphics',    dot:'#6E8BD6'},
+    {key:'model3d', zh:'3D 建模／動畫',  en:'3D Modeling',        dot:'#6FA86B'},
+    {key:'print3d', zh:'3D 列印／切片',  en:'3D Printing',        dot:'#4FA3C7'},
+    {key:'texture', zh:'紋理／材質',     en:'Texturing',          dot:'#C29A5B'},
+    {key:'uiux',    zh:'UI／UX 設計',    en:'UI & Graphic Design',dot:'#B084C9'},
+    {key:'illust',  zh:'插畫／漫畫',     en:'Illustration',       dot:'#E0A23C'},
+    {key:'collab',  zh:'協作／白板',     en:'Collaboration',      dot:'#5FB0A8'},
+    {key:'game',    zh:'遊戲引擎',       en:'Game Engines',       dot:'#C56F9A'},
+  ];
+  PRICES = [
+    {key:'free',     zh:'免費',     en:'Free',     dot:'#2E9E5B'},
+    {key:'freemium', zh:'部分免費', en:'Freemium', dot:'#3B74D6'},
+    {key:'paid',     zh:'付費',     en:'Paid',     dot:'#D08227'},
+  ];
+  PLATS = {
+    web:     {zh:'線上版', en:'Web-based', sub:'瀏覽器直接使用 · 免安裝', short:'線上', shortEn:'Web'},
+    desktop: {zh:'電腦版', en:'Desktop',   sub:'安裝於電腦 · 功能更完整', short:'電腦', shortEn:'Desktop'},
+  };
+
+  // 每個工具的 logo 圖片網址（Cloudinary）。decorate() 會帶成 tool.logoUrl，
+  // 由 <image-slot src="..."> 自動載入，免手動拖曳。
+  CLOUD = 'https://res.cloudinary.com/dbiirpmpy/image/upload/MD/paint-soft-icon';
+  LOGO = {
+    photopea:'photopea.png', pixlr:'pixlr.png', sumopaint:'sumopaint.png',
+    vectorpea:'vectorpea.png', boxysvg:'Boxy_SVG.png', tinkercad:'tinkercad.png',
+    doodle3d:'doodle3D_logo2.png', sculptgl:'sculptGL.png', figma:'figma.png',
+    canva:'canva.png', medibang:'medibang_paint.png', excalidraw:'excalidraw.png',
+    magma:'Magma.png', autodraw:'Autodraw.png', zbrush:'zbrush.png', maya:'maya.png',
+    blender:'blender.png', c4d:'C4D.png', '3dsmax':'3ds_max.png', subpainter:'SP.png',
+    subdesigner:'DS.png', marmoset:'marmoset.png', unity:'Unity.png', unreal:'Unreal.png',
+    csp:'clip.png', sai:'sai.png', krita:'krita.png', painter:'corel_painter.png',
+    photoshop:'Adobe_Photoshop_CC_icon.svg.png', affphoto:'Affinity_photo.png',
+    gimp:'GIMP.png', illustrator:'Illustrator.png', affdesigner:'Affinity_designer.png',
+    inkscape:'Inkscape.png', bambustudio:'bambu.png', cura:'Ultimaker_cura.png',
+    prusaslicer:'prusaslicer.png', orcaslicer:'orcaslicer.png', chitubox:'chitubox.png',
+  };
+  logoUrl(id){ const f=this.LOGO[id]; return f ? this.CLOUD+'/'+f : ''; }
+
+  TOOLS = [
+    // ---- WEB ----
+    {id:'photopea', name:'Photopea', tag:'線上 Photoshop', platform:'web', cat:'photo', price:'free', url:'https://www.photopea.com', equiv:'Photoshop',
+      descZh:'介面與 Photoshop 幾乎相同，支援 PSD、AI、Sketch、XCF 等格式，免費且瀏覽器直接使用，適合修圖、去背、合成。',
+      descEn:'A browser editor nearly identical to Photoshop; opens PSD, AI, Sketch and XCF files. Free and great for retouching, cut-outs and compositing.'},
+    {id:'pixlr', name:'Pixlr', tag:'線上修圖', platform:'web', cat:'photo', price:'freemium', url:'https://pixlr.com',
+      descZh:'老牌線上修圖工具，分為進階版（E）與簡易版（X），內建濾鏡與 AI 功能。',
+      descEn:'A veteran online photo editor split into Advanced (E) and Easy (X) modes, with built-in filters and AI tools.'},
+    {id:'sumopaint', name:'Sumopaint', tag:'網頁繪圖', platform:'web', cat:'photo', price:'freemium', url:'https://www.sumopaint.com',
+      descZh:'圖層、筆刷、濾鏡完整的網頁繪圖軟體，適合一般修圖與插畫。',
+      descEn:'A full-featured web paint app with layers, brushes and filters, suited to everyday editing and illustration.'},
+    {id:'vectorpea', name:'Vectorpea', tag:'線上 Illustrator', platform:'web', cat:'vector', price:'free', url:'https://www.vectorpea.com', equiv:'Illustrator',
+      descZh:'與 Illustrator 操作邏輯相近，適合製作 Logo、插畫線稿、向量圖形。',
+      descEn:'Works much like Illustrator — ideal for logos, line art and vector graphics, right in the browser.'},
+    {id:'boxysvg', name:'Boxy SVG', tag:'SVG 編輯', platform:'web', cat:'vector', price:'freemium', url:'https://boxy-svg.com',
+      descZh:'直接編輯 SVG 檔案，適合製作網頁圖示與向量素材。',
+      descEn:'Edits SVG files directly — a tidy choice for web icons and reusable vector assets.'},
+    {id:'tinkercad', name:'Tinkercad', tag:'入門 3D', platform:'web', cat:'model3d', price:'free', url:'https://www.tinkercad.com',
+      descZh:'Autodesk 推出的入門級 3D 建模平台，以拖拉幾何形狀為主，常用於教學與 3D 列印初學。',
+      descEn:'Autodesk\u2019s beginner 3D platform; build by dragging geometric shapes. Popular for classrooms and 3D-print basics.'},
+    {id:'doodle3d', name:'Doodle3D', tag:'入門 3D', platform:'web', cat:'model3d', price:'free', url:'https://www.doodle3d.com',
+      descZh:'介面類似 Tinkercad，學會即具備 3D 基礎概念，便於後續接軌 Blender、Maya 等桌面軟體。',
+      descEn:'A Tinkercad-like interface that builds 3D fundamentals before moving on to Blender or Maya.'},
+    {id:'sculptgl', name:'SculptGL', tag:'線上雕塑', platform:'web', cat:'model3d', price:'free', url:'https://stephaneginier.com/sculptgl/', equiv:'ZBrush',
+      descZh:'線上雕塑類 3D 建模，類似簡化版 ZBrush。',
+      descEn:'Browser-based digital sculpting — like a streamlined ZBrush for learning the basics of sculpting.'},
+    {id:'figma', name:'Figma', tag:'UI/UX 共編', platform:'web', cat:'uiux', price:'freemium', url:'https://www.figma.com',
+      descZh:'業界標準的 UI／UX 設計工具，支援多人即時共編、原型互動、設計系統管理。',
+      descEn:'The industry-standard UI/UX tool, with real-time multiplayer editing, prototyping and design-system management.'},
+    {id:'canva', name:'Canva', tag:'模板設計', platform:'web', cat:'uiux', price:'freemium', url:'https://www.canva.com',
+      descZh:'模板導向的設計平台，適合製作社群圖、海報、簡報、名片，無設計基礎也能上手。',
+      descEn:'A template-driven platform for social graphics, posters, slides and cards — usable with no design background.'},
+    {id:'medibang', name:'MediBang Paint', tag:'漫畫插畫', platform:'web', cat:'illust', price:'free', url:'https://medibangpaint.com',
+      descZh:'支援漫畫分鏡、筆刷、網點素材，適合漫畫與插畫創作。',
+      descEn:'Supports comic paneling, brushes and screentone assets — well suited to comics and illustration.'},
+    {id:'excalidraw', name:'Excalidraw', tag:'手繪白板', platform:'web', cat:'collab', price:'free', url:'https://excalidraw.com',
+      descZh:'手繪風格白板，適合畫流程圖、架構圖、教學示意圖。',
+      descEn:'A hand-drawn-style whiteboard, perfect for flowcharts, architecture diagrams and teaching sketches.'},
+    {id:'magma', name:'Aggie.io / Magma', tag:'多人共繪', platform:'web', cat:'collab', price:'freemium', url:'https://magma.com',
+      descZh:'多人同步繪圖協作平台，適合團隊或教學共同創作。',
+      descEn:'A real-time multiplayer drawing canvas for teams and classrooms to create together.'},
+    {id:'autodraw', name:'AutoDraw', tag:'AI 輔助繪圖', platform:'web', cat:'collab', price:'free', url:'https://www.autodraw.com',
+      descZh:'Google 推出的 AI 輔助繪圖，會辨識線條並建議對應圖示，適合無繪畫基礎者快速產出。',
+      descEn:'Google\u2019s AI drawing aid recognizes your strokes and suggests matching icons — fast results for non-artists.'},
+    // ---- DESKTOP ----
+    {id:'zbrush', name:'ZBrush', tag:'數位雕塑', platform:'desktop', cat:'model3d', price:'paid', url:'https://www.maxon.net/en/zbrush',
+      descZh:'高精度數位雕塑，業界角色與生物建模標準，廣泛用於電影、遊戲角色製作。',
+      descEn:'High-resolution digital sculpting and the industry standard for character and creature modeling in film and games.'},
+    {id:'maya', name:'Maya', tag:'綜合 3D 動畫', platform:'desktop', cat:'model3d', price:'paid', url:'https://www.autodesk.com/products/maya',
+      descZh:'Autodesk 推出的綜合 3D 軟體，建模、骨架綁定、動畫齊全，動畫與影視業界主流。',
+      descEn:'Autodesk\u2019s all-round 3D suite — modeling, rigging and animation — and a mainstay of film and animation.'},
+    {id:'blender', name:'Blender', tag:'開源 3D 全能', platform:'desktop', cat:'model3d', price:'free', url:'https://www.blender.org',
+      descZh:'免費開源，建模、雕塑、動畫、算圖、剪輯一應俱全，社群資源豐富。',
+      descEn:'Free and open-source: modeling, sculpting, animation, rendering and editing in one, with a huge community.'},
+    {id:'c4d', name:'Cinema 4D', tag:'動態圖形', platform:'desktop', cat:'model3d', price:'paid', url:'https://www.maxon.net/en/cinema-4d',
+      descZh:'介面親和，動態圖形（Motion Graphics）首選。',
+      descEn:'An approachable interface that is the go-to choice for motion graphics.'},
+    {id:'3dsmax', name:'3ds Max', tag:'建築場景', platform:'desktop', cat:'model3d', price:'paid', url:'https://www.autodesk.com/products/3ds-max',
+      descZh:'Autodesk 系列，建築視覺化、室內設計、遊戲場景常用。',
+      descEn:'Part of the Autodesk family, common in architectural visualization, interior design and game environments.'},
+    {id:'subpainter', name:'Substance Painter', tag:'3D 材質繪製', platform:'desktop', cat:'texture', price:'paid', url:'https://www.adobe.com/products/substance3d-painter.html',
+      descZh:'3D 模型表面繪製與材質製作，PBR 流程業界標準。',
+      descEn:'Paints 3D model surfaces and authors materials — the industry-standard PBR texturing workflow.'},
+    {id:'subdesigner', name:'Substance Designer', tag:'程序化材質', platform:'desktop', cat:'texture', price:'paid', url:'https://www.adobe.com/products/substance3d-designer.html',
+      descZh:'程序化材質節點編輯器，常與 Painter 搭配使用。',
+      descEn:'A procedural material node editor, commonly paired with Substance Painter.'},
+    {id:'marmoset', name:'Marmoset Toolbag', tag:'PBR 渲染', platform:'desktop', cat:'texture', price:'paid', url:'https://marmoset.co',
+      descZh:'即時 PBR 渲染、貼圖烘焙與作品集呈現。',
+      descEn:'Real-time PBR rendering, texture baking and polished portfolio presentation.'},
+    {id:'unity', name:'Unity', tag:'跨平台遊戲引擎', platform:'desktop', cat:'game', price:'freemium', url:'https://unity.com',
+      descZh:'跨平台遊戲引擎，2D／3D 皆強，獨立遊戲與行動遊戲主流。',
+      descEn:'A cross-platform game engine strong in both 2D and 3D — a mainstay for indie and mobile games.'},
+    {id:'unreal', name:'Unreal Engine', tag:'高畫質引擎', platform:'desktop', cat:'game', price:'free', url:'https://www.unrealengine.com',
+      descZh:'Epic 推出的高畫質引擎，AAA 遊戲、虛擬製作與建築視覺化常用。',
+      descEn:'Epic\u2019s high-fidelity engine, widely used for AAA games, virtual production and arch-viz.'},
+    {id:'csp', name:'Clip Studio Paint', tag:'漫畫插畫首選', platform:'desktop', cat:'illust', price:'paid', url:'https://www.clipstudio.net',
+      descZh:'漫畫與插畫首選，筆刷豐富、漫畫分鏡功能完整。',
+      descEn:'A top pick for comics and illustration, with rich brushes and complete paneling tools.'},
+    {id:'sai', name:'PaintTool SAI', tag:'插畫上色', platform:'desktop', cat:'illust', price:'paid', url:'https://www.systemax.jp/en/sai/',
+      descZh:'線條順手、介面輕量，適合純插畫上色。',
+      descEn:'Smooth line work and a lightweight interface, great for pure illustration and coloring.'},
+    {id:'krita', name:'Krita', tag:'開源繪圖', platform:'desktop', cat:'illust', price:'free', url:'https://krita.org',
+      descZh:'免費開源，筆刷引擎強大，適合插畫與概念設計。',
+      descEn:'Free and open-source with a powerful brush engine — strong for illustration and concept design.'},
+    {id:'painter', name:'Corel Painter', tag:'擬真筆觸', platform:'desktop', cat:'illust', price:'paid', url:'https://www.painterartist.com',
+      descZh:'模擬傳統媒材（油畫、水彩、粉彩），擬真筆觸著稱。',
+      descEn:'Simulates traditional media — oils, watercolor, pastels — and is famed for its realistic strokes.'},
+    {id:'photoshop', name:'Adobe Photoshop', tag:'相片合成標準', platform:'desktop', cat:'photo', price:'paid', url:'https://www.adobe.com/products/photoshop.html',
+      descZh:'業界標準的相片編輯與合成軟體。',
+      descEn:'The industry standard for photo editing and compositing.'},
+    {id:'affphoto', name:'Affinity Photo', tag:'買斷修圖', platform:'desktop', cat:'photo', price:'paid', url:'https://affinity.serif.com/photo/', equiv:'Photoshop',
+      descZh:'一次買斷的 Photoshop 替代方案，效能佳。',
+      descEn:'A one-time-purchase Photoshop alternative with strong performance.'},
+    {id:'gimp', name:'GIMP', tag:'開源修圖', platform:'desktop', cat:'photo', price:'free', url:'https://www.gimp.org', equiv:'Photoshop',
+      descZh:'免費開源相片編輯軟體。',
+      descEn:'A free and open-source photo editor.'},
+    {id:'illustrator', name:'Adobe Illustrator', tag:'向量標準', platform:'desktop', cat:'vector', price:'paid', url:'https://www.adobe.com/products/illustrator.html',
+      descZh:'向量繪圖業界標準，Logo、插畫、印刷品設計首選。',
+      descEn:'The vector industry standard — first choice for logos, illustration and print design.'},
+    {id:'affdesigner', name:'Affinity Designer', tag:'買斷向量', platform:'desktop', cat:'vector', price:'paid', url:'https://affinity.serif.com/designer/', equiv:'Illustrator',
+      descZh:'向量與點陣雙模式切換，一次買斷替代方案。',
+      descEn:'Switches between vector and raster modes; a one-time-purchase alternative.'},
+    {id:'inkscape', name:'Inkscape', tag:'開源向量', platform:'desktop', cat:'vector', price:'free', url:'https://inkscape.org', equiv:'Illustrator',
+      descZh:'免費開源 SVG 向量編輯軟體。',
+      descEn:'A free and open-source SVG vector editor.'},
+    // ---- 3D PRINTING (slicers) ----
+    {id:'bambustudio', name:'Bambu Studio', tag:'切片軟體', platform:'desktop', cat:'print3d', price:'free', url:'https://bambulab.com/en/download/studio',
+      descZh:'Bambu Lab 推出的切片軟體，將 3D 模型轉成列印路徑，內建多色列印與雲端列印管理，與 Bambu 印表機整合度高。',
+      descEn:'Bambu Lab\u2019s slicer that converts 3D models into printer toolpaths, with multi-color printing and cloud print management tightly integrated with Bambu printers.'},
+    {id:'cura', name:'UltiMaker Cura', tag:'新手切片首選', platform:'desktop', cat:'print3d', price:'free', url:'https://ultimaker.com/software/ultimaker-cura',
+      descZh:'最普及的免費切片軟體，支援大量印表機與耗材設定檔，介面友善，適合 3D 列印新手入門。',
+      descEn:'The most widely used free slicer, supporting many printers and material profiles with a friendly interface — great for 3D-printing beginners.'},
+    {id:'prusaslicer', name:'PrusaSlicer', tag:'開源切片', platform:'desktop', cat:'print3d', price:'free', url:'https://www.prusa3d.com/page/prusaslicer_424/',
+      descZh:'開源切片軟體，參數調整細緻，FDM 與樹脂列印皆支援，許多切片軟體以它為基礎。',
+      descEn:'An open-source slicer with fine-grained settings supporting both FDM and resin printing; the basis for many other slicers.'},
+    {id:'orcaslicer', name:'OrcaSlicer', tag:'校準完整', platform:'desktop', cat:'print3d', price:'free', url:'https://github.com/SoftFever/OrcaSlicer',
+      descZh:'開源切片軟體，內建完整校準流程，廣受 FDM 玩家歡迎，相容多種印表機。',
+      descEn:'An open-source slicer with a thorough built-in calibration workflow, popular among FDM enthusiasts and compatible with many printers.'},
+    {id:'chitubox', name:'CHITUBOX', tag:'樹脂切片', platform:'desktop', cat:'print3d', price:'freemium', url:'https://www.chitubox.com',
+      descZh:'樹脂（光固化）列印主流切片軟體，支援支撐生成與中空處理，分免費版與付費 Pro 版。',
+      descEn:'A leading slicer for resin (SLA/LCD) printing with support generation and hollowing, offered in free and paid Pro editions.'},
+  ];
+
+  toggleIn(arr, v){ return arr.includes(v) ? arr.filter(x=>x!==v) : arr.concat([v]); }
+  toggleCat(k){ this.setState(s=>({cats:this.toggleIn(s.cats,k)})); }
+  togglePrice(k){ this.setState(s=>({prices:this.toggleIn(s.prices,k)})); }
+  toggleCompare(id){
+    this.setState(s=>{
+      if(s.compare.includes(id)) return {compare:s.compare.filter(x=>x!==id)};
+      if(s.compare.length>=4) return {};
+      return {compare:s.compare.concat([id])};
+    });
+  }
+  removeCompare(id){ this.setState(s=>{ const c=s.compare.filter(x=>x!==id); return {compare:c, compareOpen: c.length>=2 ? s.compareOpen : false}; }); }
+  clearCompare(){ this.setState({compare:[], compareOpen:false}); }
+  clearFilters(){ this.setState({search:'', platform:'all', cats:[], prices:[]}); }
+
+  dot(color, sz){ return {width:(sz||7)+'px',height:(sz||7)+'px',borderRadius:'50%',background:color,display:'inline-block',flex:'none'}; }
+  chipStyle(active){
+    return {display:'inline-flex',alignItems:'center',gap:'7px',
+      border: active?'1px solid #1B1B18':'1px solid #E2E0D8',
+      background: active?'#1B1B18':'#fff', color: active?'#fff':'#3A3A34',
+      borderRadius:'9px',padding:'6px 11px',fontSize:'13px',fontWeight:600,cursor:'pointer',
+      fontFamily:'inherit',whiteSpace:'nowrap',transition:'all .12s'};
+  }
+  segStyle(active){
+    return {border:'none',borderRadius:'8px',padding:'7px 13px',fontSize:'13px',fontWeight:600,
+      cursor:'pointer',fontFamily:'inherit',whiteSpace:'nowrap',transition:'all .12s',
+      background: active?'#1B1B18':'transparent', color: active?'#fff':'#6E6E66'};
+  }
+  priceBadge(){ return {display:'inline-flex',alignItems:'center',gap:'6px',background:'#F4F2EC',
+    border:'1px solid #EAE8E1',borderRadius:'8px',padding:'4px 9px',fontSize:'12.5px',fontWeight:600,
+    color:'#56564E',whiteSpace:'nowrap'}; }
+  navRow(active, indent){
+    const st={display:'flex',alignItems:'center',gap:'8px',padding:'7px 10px',borderRadius:'9px',cursor:'pointer',
+      transition:'background .12s', color: active?'var(--accent)':'#3A3A34',
+      background: active?'color-mix(in srgb, var(--accent) 11%, #ffffff)':'transparent'};
+    if(indent) st.paddingLeft='30px';
+    return st;
+  }
+  navLabel(strong){ return {fontSize: strong?'14px':'13px', fontWeight: strong?700:500, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', flex:'1', minWidth:'0'}; }
+  navCount(active){ return {marginLeft:'auto', fontSize:'11.5px', fontWeight:600, fontVariantNumeric:'tabular-nums', color: active?'var(--accent)':'#B0AFA5', flex:'none'}; }
+  chev(){ return {border:'none',background:'none',cursor:'pointer',color:'#9A9A90',fontSize:'10px',width:'14px',padding:'0',fontFamily:'inherit',lineHeight:1,flex:'none'}; }
+  buildTree(s, q){
+    const matchSP=(t)=>{
+      if(s.prices.length && !s.prices.includes(t.price)) return false;
+      if(q){ const hay=(t.name+' '+t.tag+' '+t.descZh+' '+t.descEn+' '+(t.equiv||'')).toLowerCase(); if(!hay.includes(q)) return false; }
+      return true;
+    };
+    const spList=this.TOOLS.filter(matchSP);
+    const countFor=(p,cat)=>spList.filter(t=>t.platform===p && (!cat||t.cat===cat)).length;
+    const isAll=s.platform==='all' && s.cats.length===0;
+    const tree=[];
+    tree.push({ onClick:()=>this.setState({platform:'all',cats:[]}), rowStyle:this.navRow(isAll,false),
+      showChevron:false, showDot:false, labelStyle:this.navLabel(true), label:'全部 All Tools',
+      countStyle:this.navCount(isAll), count:spList.length });
+    ['web','desktop'].forEach(p=>{
+      const meta=this.PLATS[p];
+      const pActive=s.platform===p && s.cats.length===0;
+      const expanded=s.expanded[p]!==false;
+      tree.push({ onClick:()=>this.setState({platform:p,cats:[]}), rowStyle:this.navRow(pActive,false),
+        showChevron:true, chevron: expanded?'▾':'▸', chevronStyle:this.chev(),
+        onToggle:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.setState(st=>({expanded:Object.assign({},st.expanded,{[p]: !(st.expanded[p]!==false)})})); },
+        showDot:false, labelStyle:this.navLabel(true), label:meta.zh+'  '+meta.en,
+        countStyle:this.navCount(pActive), count:countFor(p,null) });
+      if(expanded){
+        this.CATS.forEach(c=>{
+          if(!this.TOOLS.some(t=>t.platform===p && t.cat===c.key)) return;
+          const cActive=s.platform===p && s.cats.length===1 && s.cats[0]===c.key;
+          tree.push({ onClick:()=>this.setState({platform:p,cats:[c.key]}), rowStyle:this.navRow(cActive,true),
+            showChevron:false, showDot:true, dotStyle:this.dot(c.dot), labelStyle:this.navLabel(false),
+            label:c.zh, countStyle:this.navCount(cActive), count:countFor(p,c.key) });
+        });
+      }
+    });
+    return tree;
+  }
+
+  decorate(t){
+    const c = this.CATS.find(x=>x.key===t.cat);
+    const p = this.PRICES.find(x=>x.key===t.price);
+    const pl = this.PLATS[t.platform];
+    const inC = this.state.compare.includes(t.id);
+    return Object.assign({}, t, {
+      catZh:c.zh, catEn:c.en, catDotStyle:this.dot(c.dot),
+      priceZh:p.zh, priceEn:p.en, priceDotStyle:this.dot(p.dot), priceBadgeStyle:this.priceBadge(),
+      platZh:pl.short, platEn:pl.shortEn,
+      hasEquiv:!!t.equiv, equivBare:t.equiv||'', equivLabel:t.equiv?('≈ '+t.equiv):'',
+      logoId:'logo-'+t.id, logoUrl:this.logoUrl(t.id),
+      inCompare:inC, notInCompare:!inC,
+      onOpen:()=>this.setState({detailId:t.id}),
+      onOpenSite:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); window.open(t.url,'_blank','noopener'); },
+      onToggleCompare:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.toggleCompare(t.id); },
+    });
+  }
+
+  renderVals(){
+    const s = this.state;
+    const q = (s.search||'').trim().toLowerCase();
+    const match = (t)=>{
+      if(s.platform!=='all' && t.platform!==s.platform) return false;
+      if(s.cats.length && !s.cats.includes(t.cat)) return false;
+      if(s.prices.length && !s.prices.includes(t.price)) return false;
+      if(q){
+        const hay = (t.name+' '+t.tag+' '+t.descZh+' '+t.descEn+' '+(t.equiv||'')).toLowerCase();
+        if(!hay.includes(q)) return false;
+      }
+      return true;
+    };
+    const filtered = this.TOOLS.filter(match);
+
+    const groups = ['web','desktop'].map(pl=>{
+      const cats = this.CATS.map(c=>{
+        const tools = filtered.filter(t=>t.platform===pl && t.cat===c.key).map(t=>this.decorate(t));
+        return {key:c.key, zh:c.zh, en:c.en, dotStyle:this.dot(c.dot,8), tools, count:tools.length, has:tools.length>0};
+      }).filter(c=>c.has);
+      const count = cats.reduce((a,c)=>a+c.count,0);
+      const meta = this.PLATS[pl];
+      return {key:pl, zh:meta.zh, en:meta.en, sub:meta.sub, cats, count, has:cats.length>0};
+    }).filter(g=>g.has);
+
+    const platformOpts = [['all','全部','All'],['web','線上','Web'],['desktop','電腦','Desktop']].map(([k,zh,en])=>({
+      key:k, labelZh:zh, labelEn:en, style:this.segStyle(s.platform===k), onClick:()=>this.setState({platform:k})
+    }));
+    const catOpts = this.CATS.map(c=>({
+      key:c.key, labelZh:c.zh, labelEn:c.en, dotStyle:this.dot(c.dot), style:this.chipStyle(s.cats.includes(c.key)), onClick:()=>this.toggleCat(c.key)
+    }));
+    const priceOpts = this.PRICES.map(p=>({
+      key:p.key, labelZh:p.zh, labelEn:p.en, dotStyle:this.dot(p.dot), style:this.chipStyle(s.prices.includes(p.key)), onClick:()=>this.togglePrice(p.key)
+    }));
+
+    const detailTool = s.detailId ? this.decorate(this.TOOLS.find(t=>t.id===s.detailId)) : null;
+    const compareTools = s.compare.map(id=>this.decorate(this.TOOLS.find(t=>t.id===id)));
+    const compareChips = s.compare.map(id=>{ const t=this.TOOLS.find(x=>x.id===id); return {name:t.name, onRemove:()=>this.removeCompare(id)}; });
+
+    return {
+      rootStyle:{ minHeight:'100vh', background:'#FBFAF7',
+        '--accent': this.props.accent || '#2347D9',
+        '--rowpad': (this.props.density==='compact') ? '9px 12px' : '15px 14px',
+        '--descdisplay': (this.props.showRowDesc===false) ? 'none' : 'block' },
+      totalCount:this.TOOLS.length,
+      shownCount:filtered.length,
+      search:s.search,
+      onSearch:(e)=>this.setState({search:e.target.value}),
+      platformOpts, catOpts, priceOpts,
+      hasFilters: s.platform!=='all' || s.cats.length>0 || s.prices.length>0 || (s.search||'').trim().length>0,
+      onClearFilters:()=>this.clearFilters(),
+      groups, isEmpty: groups.length===0,
+      tree: this.buildTree(s, q),
+      navOpen: s.navOpen!==false, navClosed: s.navOpen===false,
+      onToggleNav: ()=>this.setState(st=>({navOpen: st.navOpen===false})),
+      detailOpen:!!detailTool, detailTool, onCloseDetail:()=>this.setState({detailId:null}),
+      compareCount:s.compare.length, compareChips, compareTools,
+      canCompare:s.compare.length>=2, cannotCompare:s.compare.length<2,
+      compareOpen:s.compareOpen,
+      onOpenCompare:()=>{ if(this.state.compare.length>=2) this.setState({compareOpen:true}); },
+      onCloseCompare:()=>this.setState({compareOpen:false}),
+      onClearCompare:()=>this.clearCompare(),
+      stop:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); },
+    };
+  }
+}
+</script>
+</body>
+</html>
